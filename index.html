@@ -1,0 +1,24 @@
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <title>ExView分享</title>
+    </head>
+    <body>
+        <div style="text-align: center;">
+            <h1 class="sharename">ExView</h1>
+            <a class="openshareurl" href="exv://openApp">使用ExView打开</a>
+            <hr/>
+            <div class="shareurl" style="white-space: normal;word-break: break-all;width: 50%;display: inline-block;"></div>
+        </div>
+        <script>
+            var shareurl=window.location.hash.substring(1);
+            if(shareurl){
+                document.querySelector('.openshareurl').href=shareurl;
+                document.querySelector('.shareurl').innerHTML=shareurl;
+                var sharename=decodeURIComponent(shareurl||'').split('::').pop();
+                document.querySelector('.sharename').innerHTML=sharename;
+                document.title=sharename+' - ExView分享';                
+            }
+        </script>
+    </body>
+</html>
