@@ -4,22 +4,68 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
 		<meta name="mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-capable" content="yes">
+		<link href="icon.png" rel="SHORTCUT ICON">
         <title>ExView分享</title>
     </head>
     <body>
         <div style="text-align: center;">
+			<img class="shareimg" style="max-width:100%;border-radius: 3px;box-shadow: 0 8px 16px -5px black;" onerror="icon.png" src="icon.png" />
             <h1 class="sharename">ExView</h1>
-            <a class="openshareurl" href="exv://openApp">使用ExView打开</a>
-            <hr/>
-            <div class="shareurl" style="white-space: normal;word-break: break-all;display: inline-block;"></div>
+            <a class="openshareurl" href="exv://openApp" style="background: #528888;padding: 8px 16px;border-radius: 32px;text-decoration: none;color: white;">打开ExView</a>
+			<a href="https://www.exview.ml/" style="background: #528888;padding: 8px 16px;border-radius: 32px;text-decoration: none;color: white;">下载ExView</a>
+            <hr style="margin: 16px 0;"/>
+			<h6 class="shareurlshow" style="margin: 16px;display:none;">复制以下内容并分享编号,在"编号跳转"功能里粘贴!</h6>
+			<div style="text-align: center;width: 100%;">
+				<div class="shareurl" style="display: inline-block;text-align: left;white-space: normal;word-break: break-all;display: inline-block;border: 1px gainsboro solid;padding: 8px;border-radius: 3px;"></div>
+			</div>
         </div>
         <script>
+			function base64encode(str) {
+				return btoa(unescape(encodeURIComponent(str)));
+			}
+			function base64decode(str) {
+				return decodeURIComponent(escape(atob(str)));
+			}
+			function isWeiXin() {
+				var ua = navigator.userAgent.toLowerCase();
+				if (ua.match(/MicroMessenger/i) == "micromessenger" || ua.match(/WeiBo/i) == "weibo") {
+					return true;
+				} else if (ua.indexOf('mobile mqqbrowser') > -1) {
+					return true;
+				} else if (ua.indexOf('iphone') > -1 || ua.indexOf('mac') > -1) {
+					if (ua.indexOf('qq') > -1) {
+						return true;
+					}
+				}
+				return false;
+			}
+			if(self!=top){
+				if(isWeiXin()){
+					alert('请在右上角点击选择用浏览器打开！');
+				}else{
+					top.location.href=self.location.href;
+				}
+			}
             var shareurl=window.location.hash.substring(1);
             if(shareurl){
                 document.querySelector('.openshareurl').href=shareurl;
-                document.querySelector('.shareurl').innerHTML=shareurl;
-                var sharename=decodeURIComponent(shareurl||'').split('::').pop();
+				var sharecode=decodeURIComponent(shareurl||'');
+				sharecode=sharecode.replace('exv://openShareCode?data=','');
+                document.querySelector('.shareurl').innerHTML=sharecode;
+				document.querySelector('.shareurlshow').style.display='block';
+				var sharearr=sharecode.split('::');
+                var sharename=sharearr.pop();
                 document.querySelector('.sharename').innerHTML=sharename;
+				var shareimg=sharearr.pop()||'';
+				if(shareimg.indexOf('exview://')==0){
+					var shareimgarr=shareimg.split('?');
+					shareimgarr.shift();
+					shareimg=shareimgarr.join('?').split('&')[0];
+					shareimg=base64decode(shareimg);
+					shareimg=JSON.parse(shareimg);
+					shareimg=shareimg.imgurl;
+					document.querySelector('.shareimg').src=shareimg;
+				}
                 document.title=sharename+' - ExView分享';                
             }
         </script>
